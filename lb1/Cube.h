@@ -20,6 +20,7 @@ public:
 	void Equiprobable();
 	void Info();
 	void Drop(int);
+	bool Validation();
 	Cube(int);
 	~Cube();
 

@@ -25,6 +25,11 @@ int main() {
 		cout << "sdsdc";
 		break;
 	}
+	if (!cube.Validation()) {
+		cout << "Сумма всех вероятностей не равна 1!" << endl;
+		system("pause");
+		exit(0);
+	}
 	cout << "Количество бросков:";
 	cin >> NumberOfShots;
 	cube.Drop(NumberOfShots);

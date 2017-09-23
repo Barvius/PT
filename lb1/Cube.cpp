@@ -11,7 +11,7 @@ void Cube::_FillOrt() {
 			break;
 		j++;
 	}
-	
+
 }
 
 void Cube::Unlikely(int Sides) {
@@ -50,7 +50,7 @@ void Cube::Drop(int NumberOfShots) {
 	random_device rd;  //Will be used to obtain a seed for the random number engine
 	mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
 	uniform_real_distribution<> dis(0, 1);
-	
+
 	for (int i = 0; i < NumberOfShots; i++) {
 		float chanceTemp = dis(gen);
 		for (int j = 1; j < _NumberOfSides + 1; j++) {
@@ -62,6 +62,14 @@ void Cube::Drop(int NumberOfShots) {
 	}
 }
 
+bool Cube::Validation() {
+	float tmp = 0;
+	for (int i = 0; i < _NumberOfSides; i++) {
+		tmp += _Probability[i];
+	}	
+	return tmp != 1;
+
+}
 Cube::Cube(int NumberOfSides) {
 	_NumberOfSides = NumberOfSides;
 	_Probability = new float[NumberOfSides];
