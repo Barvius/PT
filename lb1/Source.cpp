@@ -25,6 +25,7 @@ int main() {
 		cout << "sdsdc";
 		break;
 	}
+	cube.FillOrt();
 	if (!cube.Validation()) {
 		cout << "Сумма всех вероятностей не равна 1!" << endl;
 		system("pause");

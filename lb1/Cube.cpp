@@ -1,32 +1,27 @@
 ﻿#include "Cube.h"
 
-void Cube::_FillOrt() {
-	int j = 0;
-	float i = 0.0;
-	while (i <= 1.0) {
-		_Ort[j] = i;
-		if (i < 1.0)
-			i += _Probability[j];
-		else
-			break;
-		j++;
+void Cube::FillOrt() {
+	float val = 0;
+	for (int i = 0; i < _NumberOfSides; i++){
+		_Ort[i] = val;
+		val += _Probability[i];
 	}
-
+	_Ort[_NumberOfSides] = val;
 }
 
 void Cube::Unlikely(int Sides) {
-	float chanceTemp = 1.0 - _DominantValue;
-	chanceTemp /= (_NumberOfSides - 1);
+	float tmp = 1.0 - _DominantValue;
+	tmp /= (_NumberOfSides - 1);
 	for (int i = 0; i < _NumberOfSides; i++) {
-		_Probability[i] = chanceTemp;
+		_Probability[i] = tmp;
 	}
 	_Probability[Sides - 1] = _DominantValue;
 }
 
 void Cube::Equiprobable() {
-	float chanceTemp = 1.0 / _NumberOfSides;
+	float tmp = 1.0 / _NumberOfSides;
 	for (int i = 0; i < _NumberOfSides; i++)
-		_Probability[i] = chanceTemp;
+		_Probability[i] = tmp;
 }
 
 void Cube::Info() {
@@ -46,16 +41,14 @@ void Cube::Info() {
 
 void Cube::Drop(int NumberOfShots) {
 	_NumberOfShots = NumberOfShots;
-	_FillOrt();
-	random_device rd;  //Will be used to obtain a seed for the random number engine
-	mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+	random_device rd;
+	mt19937 gen(rd());
 	uniform_real_distribution<> dis(0, 1);
-
 	for (int i = 0; i < NumberOfShots; i++) {
-		float chanceTemp = dis(gen);
-		for (int j = 1; j < _NumberOfSides + 1; j++) {
-			if (_Ort[j] >= chanceTemp && _Ort[j - 1] < chanceTemp) {
-				_AmountOfFallout[j - 1]++;
+		float interval = dis(gen);
+		for (int j = 0; j < _NumberOfSides; j++) {
+			if (_Ort[j] < interval && _Ort[j + 1] >= interval) {
+				_AmountOfFallout[j]++;
 				break;
 			}
 		}
@@ -63,18 +56,19 @@ void Cube::Drop(int NumberOfShots) {
 }
 
 bool Cube::Validation() {
-	float tmp = 0;
+	double eps = 1e-7;
+	double tmp = 0;
 	for (int i = 0; i < _NumberOfSides; i++) {
 		tmp += _Probability[i];
 	}	
-	return tmp != 1;
-
+	return fabs(tmp - 1.0)<eps;
 }
+
 Cube::Cube(int NumberOfSides) {
 	_NumberOfSides = NumberOfSides;
 	_Probability = new float[NumberOfSides];
 	_AmountOfFallout = new int[NumberOfSides];
-	_Ort = new float[NumberOfSides];
+	_Ort = new float[NumberOfSides+1];
 	for (int i = 0; i < NumberOfSides; i++) {
 		_AmountOfFallout[i] = NULL;
 	}
@@ -83,5 +77,5 @@ Cube::Cube(int NumberOfSides) {
 Cube::~Cube() {
 	delete[] _Probability;
 	delete[] _AmountOfFallout;
-	//delete[] _Ort;
+	delete[] _Ort;
 }

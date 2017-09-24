@@ -14,8 +14,8 @@ private:
 	float _DominantValue = 0.5;
 	int* _AmountOfFallout;
 	int _NumberOfShots;
-	void _FillOrt();
 public:
+	void FillOrt();
 	void Unlikely(int);
 	void Equiprobable();
 	void Info();
