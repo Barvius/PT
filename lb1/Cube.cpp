@@ -1,81 +1,80 @@
-п»ї#include "Cube.h"
+#include "Cube.h"
 
-void Cube::FillOrt() {
-	float val = 0;
-	for (int i = 0; i < _NumberOfSides; i++){
-		_Ort[i] = val;
-		val += _Probability[i];
+
+Cube::Cube(){
+	_FillMV(6, NULL, NULL);
+}
+
+
+Cube::~Cube(){
+	delete[] _MV;
+	delete[] _ORT;
+}
+
+
+// Конструктор с заданием количества сторон
+Cube::Cube(int N){
+	_FillMV(N, NULL, NULL);
+}
+
+
+// Конструктор с заданием количества сторон и доминирующей грани
+Cube::Cube(int N, int DominantSides, float DominantValue){
+	_FillMV(N, DominantSides, DominantValue);
+}
+
+
+// Заполнение массива вероятности и выделение памяти
+void Cube::_FillMV(int N, int DominantSides, float DominantValue){
+	_N = N;
+	_MV = new float[N];
+	_ORT = new float[N];
+	float S = 0, V;
+	V = (1.0 - DominantValue) / (_N - 1);
+	for (int i = 0; i < _N - 1; i++) {
+		if (i + 1 == DominantSides && DominantSides) {
+			_MV[i] = DominantValue;
+		} else {
+			_MV[i] = V;
+		}
+		S += _MV[i];
 	}
-	_Ort[_NumberOfSides] = val;
-}
-
-void Cube::Unlikely(int Sides) {
-	float tmp = 1.0 - _DominantValue;
-	tmp /= (_NumberOfSides - 1);
-	for (int i = 0; i < _NumberOfSides; i++) {
-		_Probability[i] = tmp;
+	_MV[N - 1] = 1.0 - S;
+	float val = _MV[0];
+	for (int i = 0; i < _N; i++) {
+		_ORT[i] = val;
+		val += _MV[i+1];
 	}
-	_Probability[Sides - 1] = _DominantValue;
-}
-
-void Cube::Equiprobable() {
-	float tmp = 1.0 / _NumberOfSides;
-	for (int i = 0; i < _NumberOfSides; i++)
-		_Probability[i] = tmp;
-}
-
-void Cube::Info() {
-	cout.fill('-');
-	cout << "+" << setw(8) << "+" << setw(19) << "+" << setw(25) << "+" << setw(21) << "+" << endl;
-	cout << "| в„– РіСЂ. | РўРµРѕСЂ.РІРµСЂРѕСЏС‚РЅРѕСЃС‚СЊ | РљРѕР»-РІРѕ РІС‹РїР°РґРµРЅРёР№ РіСЂР°РЅРё | РџСЂР°РєС‚. РІРµСЂРѕСЏС‚РЅРѕСЃС‚СЊ |" << endl;
-	cout << "+" << setw(8) << "+" << setw(19) << "+" << setw(25) << "+" << setw(21) << "+" << endl;
-	cout.fill(' ');
-	for (int i = 0; i < _NumberOfSides; i++) {
-		cout << "|" << setw(7) << i + 1 << "|" << setw(16) << _Probability[i] * 100 << " %|"
-			<< setw(24) << _AmountOfFallout[i] << "|"
-			<< setw(18) << _AmountOfFallout[i] * 100 / _NumberOfShots << " %|" << endl;
+	cout << "MV ";
+	for (int i = 0; i < _N; i++) {
+		cout << _MV[i] << " | ";
 	}
-	cout.fill('-');
-	cout << "+" << setw(8) << "+" << setw(19) << "+" << setw(25) << "+" << setw(21) << "+" << endl;
+	cout << endl;
+	cout << "ORT ";
+	for (int i = 0; i < _N; i++) {
+		cout << _ORT[i] << " | ";
+	}
+	cout << endl;
+	//_ORT[_N] = val;
 }
 
-void Cube::Drop(int NumberOfShots) {
-	_NumberOfShots = NumberOfShots;
+
+// Бросок кубика
+int Cube::Drop(){
 	random_device rd;
 	mt19937 gen(rd());
-	uniform_real_distribution<> dis(0, 1);
-	for (int i = 0; i < NumberOfShots; i++) {
-		float interval = dis(gen);
-		for (int j = 0; j < _NumberOfSides; j++) {
-			if (_Ort[j] < interval && _Ort[j + 1] >= interval) {
-				_AmountOfFallout[j]++;
-				break;
-			}
+	uniform_real_distribution<> dis(0,1);
+	for (int i = 1; i < _N; i++){
+		float val = dis(gen);
+		//cout << val << endl;
+		if(_ORT[i-1] < val && _ORT[i]>=val){
+			//cout << val << " | " << i+1 <<endl;
+			return i;
 		}
 	}
 }
 
-bool Cube::Validation() {
-	double eps = 1e-7;
-	double tmp = 0;
-	for (int i = 0; i < _NumberOfSides; i++) {
-		tmp += _Probability[i];
-	}	
-	return fabs(tmp - 1.0)<eps;
-}
 
-Cube::Cube(int NumberOfSides) {
-	_NumberOfSides = NumberOfSides;
-	_Probability = new float[NumberOfSides];
-	_AmountOfFallout = new int[NumberOfSides];
-	_Ort = new float[NumberOfSides+1];
-	for (int i = 0; i < NumberOfSides; i++) {
-		_AmountOfFallout[i] = NULL;
-	}
-}
-
-Cube::~Cube() {
-	delete[] _Probability;
-	delete[] _AmountOfFallout;
-	delete[] _Ort;
+float* Cube::GetMV(){
+	return _MV;
 }

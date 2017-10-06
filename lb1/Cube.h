@@ -1,27 +1,26 @@
-п»ї#pragma once
-
-#include <iostream>
-#include <iomanip>
-#include <random>
-
+#pragma once
+#include<iostream>
+#include<random>
 using namespace std;
-
 class Cube{
-private:
-	int _NumberOfSides;
-	float* _Probability;
-	float* _Ort;
-	float _DominantValue = 0.5;
-	int* _AmountOfFallout;
-	int _NumberOfShots;
 public:
-	void FillOrt();
-	void Unlikely(int);
-	void Equiprobable();
-	void Info();
-	void Drop(int);
-	bool Validation();
-	Cube(int);
+	Cube();
 	~Cube();
-
+private:
+	int _N;
+	float* _MV;
+	float* _ORT;
+public:
+	// Конструктор с заданием количества сторон
+	Cube(int N);
+	// Конструктор с заданием количества сторон и доминирующей грани
+	Cube(int N, int DominantSides, float DominantValue);
+private:
+	// Заполнение массива вероятности и выделение памяти
+	void _FillMV(int N, int DominantSides, float DominantValue);
+public:
+	// Бросок кубика
+	int Drop();
+	float* GetMV();
 };
+
