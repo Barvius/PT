@@ -1,4 +1,4 @@
-﻿#include "Cube.h"
+#include "Cube.h"
 
 using namespace std;
 
@@ -20,10 +20,10 @@ void Cube::_FillMV(int N, int DominantSides, float DominantValue) {
 		S += _MV[i];
 	}
 	_MV[N - 1] = 1.0 - S;
-	float val = _MV[0];
+	float val = 0;
 	for (int i = 0; i < _N; i++) {
+		val += _MV[i];
 		_ORT[i] = val;
-		val += _MV[i + 1];
 	}
 }
 
@@ -31,12 +31,13 @@ int Cube::Drop() {
 	random_device rd;
 	mt19937 gen(rd());
 	uniform_real_distribution<> dis(0, 1);
-	for (int i = 0; i < _N; i++) {
-		float val = dis(gen);
+	float val = dis(gen);
+	for (int i = 0; i < _N; i++) {	
 		if (_ORT[i] >= val) {
-			return i;
+			return i+1;
 		}
 	}
+	return 0;
 }
 
 float* Cube::GetMV() {

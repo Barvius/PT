@@ -38,7 +38,7 @@ int main() {
 	MV = new float[NumberOfSides];
 	MV = cube->GetMV();
 	for (int i = 0; i < NumberOfShots; i++){
-		AmountOfFallout[cube->Drop()] += 1;
+		AmountOfFallout[cube->Drop()-1] += 1;
 	}
 	cout.fill('-');
 	cout << "+" << setw(8) << "+" << setw(19) << "+" << setw(25) << "+" << setw(21) << "+" << endl;
