@@ -55,15 +55,18 @@ void Obrabotka::Draw() {
 	string title;
 	vector<float>Histogram;
 	vector<float>Line;
+	vector<float>Line2;
 	for (int q = 0; q < 3; q++) {
 		maxY = 0;
 		Histogram.clear();
 		Line.clear();
+		Line2.clear();
 		switch (q){
 		case 0:
 			for (int i = 0; i < K; i++){
 				Histogram.push_back(F[i]);
-				Line.push_back(Fe[i]);
+				Line2.push_back(Fe[i]);
+				Line.push_back(PzFV[i]);
 			}
 			coordX = 1;
 			coordY = 1;
@@ -72,7 +75,7 @@ void Obrabotka::Draw() {
 		case 1:
 			for (int i = 0; i < K; i++) {
 				Histogram.push_back(Fe[i]);
-				Line.push_back(PzFV[i]);
+				Line.push_back(F[i]);
 			}
 			coordX = 1;
 			coordY = 11;
@@ -161,7 +164,7 @@ void Obrabotka::Draw() {
 			glRectf((coordX + i)*KX, coordY + Histogram[i] * KY, (coordX + i + 1)*KX, coordY);
 		}
 		
-		glColor4f(1.0f, 0.0f, 0.0f, 0.75f);
+		glColor4f(1.0f, 0.0f, 0.0f, 0.9f);
 		glLineWidth(2);
 		glBegin(GL_LINE_STRIP);
 		for (int i = 0; i < K; i++) {
@@ -175,6 +178,22 @@ void Obrabotka::Draw() {
 			glVertex2f(coordX + i*KX + 0.5, coordY + Line[i] * KY);
 		}
 		glEnd();
+		if(Line2.size()){
+		glColor4f(0.0f, 1.0f, 0.0f, 0.9f);
+		glLineWidth(2);
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i < K; i++) {
+			glVertex2f(coordX + i*KX + 1, coordY + Line2[i] * KY);
+
+		}
+		glEnd();
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		for (int i = 0; i < K; i++) {
+			glVertex2f(coordX + i*KX +1, coordY + Line2[i] * KY);
+		}
+		glEnd();
+		}
 		glDisable(GL_BLEND);
 	}
 }
@@ -226,7 +245,7 @@ void Obrabotka::Kalculate() {
 											/*\/ \/ \/ \/ \/ \/ \/ \/*/
 		val = (float)sm / _Arr.size();
 		val2 = (float)sm2 / _Arr.size();
-		PzFV.push_back(val);//8
+		
 		Pi = Func_Laplace((Intervals[i + 1] - Mx) / Sgm, M_EPS) - Func_Laplace((Intervals[i] - Mx) / Sgm, M_EPS);
 		//P_sum += Pi;
 		if (i == K - 1) {
@@ -234,12 +253,12 @@ void Obrabotka::Kalculate() {
 			val2 += 1.0 - val2;
 			Pi = 1 - P_sum;
 		}
-		
+		PzFV.push_back(val);//8
 		//גûקטסכ 8 סעמכבצא
 		PV.push_back((float)Ni[i] / _Arr.size());//6
 		//Pi = Func_Laplace((Intervals[i + 1] - Mx) / Sgm, M_EPS) - Func_Laplace((Intervals[i] - Mx) / Sgm, M_EPS);
 		P_sum += Pi;
-		sm += PV[i];
+		sm += Ni[i];
 		
 
 		P.push_back(Pi);//9
@@ -249,8 +268,8 @@ void Obrabotka::Kalculate() {
 	}
 	float Sum = 0;
 	for (int i = 0; i < K; i++) {
-		Fe.push_back(Sum);
-		Sum += PV[i];
+		Fe.push_back(F[i]);
+		Sum += F[i];
 	}
 	Fe.push_back(1);
 	cout.fill('-');
