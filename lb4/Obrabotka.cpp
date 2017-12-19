@@ -18,7 +18,7 @@ float Obrabotka::Kolmogorov() {
 		}
 	}
 	int n = _Arr.size();
-	return (DMax*sqrt((n*n) / (n + n)));
+	return (DMax*sqrt(n));
 }
 
 double Obrabotka::Func_Laplace(double a, double precision) {
@@ -241,8 +241,7 @@ void Obrabotka::Kalculate() {
 	int sm = 0, sm2=0;
 	for (int i = 0; i < K; i++) {
 		//вычисл 8 столбца
-											// тут блять хуйня, доделать//
-											/*\/ \/ \/ \/ \/ \/ \/ \/*/
+											
 		val = (float)sm / _Arr.size();
 		val2 = (float)sm2 / _Arr.size();
 		
